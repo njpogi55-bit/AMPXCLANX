@@ -122,21 +122,37 @@ button {
 </div>
 
 <!-- SIGNUP -->
-function goBackToForm() {
-  document.getElementById("successBox").classList.add("hidden");
-  document.getElementById("signupBox").classList.remove("hidden");
-  document.getElementById("submitBtn").disabled = false;
-  document.getElementById("submitBtn").innerText = "SUBMIT APPLICATION";
-  
-  document.getElementById("telegram").value = "";
-  document.getElementById("fb").value = "";
-  document.getElementById("tgnumber").value = "";
-  document.getElementById("fullname").value = "";
-  document.getElementById("uploadStatus").innerHTML = 
-    `<i class="fas fa-video" style="font-size: 24px; color: var(--text-gray);"></i><br>` +
-    `<span style="font-size: 13px;">Upload Video Proof</span><br><small style="color: #555;">max 50MB</small>`;
-}
+async function signup() {
+  let gmail = gmailInput();
+  let telegram = tgInput();
+  let number = numInput();
+  let fb = fbInput();
 
+  if (!gmail || !telegram || !number || !fb) return;
+
+  let users = JSON.parse(localStorage.getItem("AmpxUsers")) || [];
+  users.push({ gmail, telegram, number, fb });
+  localStorage.setItem("ampxUsers", JSON.stringify(users));
+
+  /* TELEGRAM BOT SEND */
+  let BOT_TOKEN = "8654543708:AAEMRrbRhHPWN_juewL1BonEd66mm9xkJP4";
+  let CHAT_ID = "8552520603";
+
+  let msg =
+`🚀 AMPX CLAN APPLICATION INFORMATION
+📧 ${gmail}
+👤 @${telegram}
+📱 ${number}
+📘 ${fb}`;
+📷 ${video}
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: msg
+    })
+  });
 <!-- SUCCESS -->
 <div class="box hidden" id="successBox">
   <h2>WELCOME ✔</h2>
