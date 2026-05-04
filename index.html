@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AMPX CLAN SYSTEM</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #2b003d, #4b0082);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* MENU */
+.menu-btn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  font-size: 26px;
+  cursor: pointer;
+  display: none;
+}
+
+.menu {
+  position: fixed;
+  top: 50px;
+  right: 15px;
+  background: #1a0030;
+  border: 1px solid #b400ff;
+  border-radius: 10px;
+  display: none;
+  width: 200px;
+}
+
+.menu a {
+  display: block;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+}
+
+.menu a:hover {
+  background: #2a0040;
+}
+
+/* BOX */
+.box {
+  background: #1a0030;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  border: 1px solid #b400ff;
+}
+
+.logo {
+  width: 100%;
+  max-width: 180px;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border: 1px solid #b400ff;
+  border-radius: 8px;
+  background: #120025;
+  color: white;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #b400ff;
+  color: white;
+  font-weight: bold;
+}
+
+.hidden { display: none; }
+
+/* ADMIN */
+.adminPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d001a;
+  overflow-y: auto;
+  padding: 20px;
+  display: none;
+}
+
+.userCard {
+  background: #1a0030;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #b400ff;
+}
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+<div class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</div>
+
+<div class="menu" id="menu">
+  <a href="https://t.me/+mF8MIhnjQREyNDU1" target="_blank">🔗 CLAN LINK</a>
+  <a href="#" onclick="openAdmin()">🛠 ADMIN DASHBOARD</a>
+</div>
+
+<!-- SIGNUP -->
+<div class="box" id="signupBox">
+  <img src="ampx-logo.png" class="logo">
+  <h2>AMPX CLAN APPLICATION</h2>
+
+  <input type="text" id="gmail" placeholder="Enter Gmail">
+  <input type="text" id="telegram" placeholder="Telegram Username">
+  <input type="text" id="tgnumber" placeholder="Telegram Number">
+  <input type="text" id="fb" placeholder="Facebook Link">
+
+  <button onclick="signup()">SIGN UP</button>
+</div>
+
+<!-- SUCCESS -->
+<div class="box hidden" id="successBox">
+  <h2>WELCOME ✔</h2>
+  <p>https://t.me/+mF8MIhnjQREyNDU1</p>
+  
+  <h2>COPY AND PASTE TO TELEGRAM</h>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="adminPanel" id="adminPanel">
+  <h2>ADMIN DASHBOARD</h2>
+  <div id="userList"></div>
+  <button onclick="closeAdmin()">CLOSE</button>
+</div>
+
+<script>
+
+/* MENU */
+function toggleMenu() {
+  let menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* VALIDATION */
+function isValidGmail(email) {
+  return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+}
+function isValidTelegram(user) {
+  return /^[a-zA-Z0-9_]{5,32}$/.test(user);
+}
+function isValidNumber(num) {
+  return /^[0-9]{10,13}$/.test(num);
+}
+function isValidFB(link) {
+  return /facebook\.com/.test(link);
+}
+
+/* SIGNUP */
+async function signup() {
+  let gmail = gmailInput();
+  let telegram = tgInput();
+  let number = numInput();
+  let fb = fbInput();
+
+  if (!gmail || !telegram || !number || !fb) return;
+
+  let users = JSON.parse(localStorage.getItem("AmpxUsers")) || [];
+  users.push({ gmail, telegram, number, fb });
+  localStorage.setItem("ampxUsers", JSON.stringify(users));
+
+  /* TELEGRAM BOT SEND */
+  let BOT_TOKEN = "8602094895:AAGaJpbfo2m3mJJ5Osg-c3iO3p_RQ3c_IhE";
+  let CHAT_ID = "8552520603";
+
+  let msg =
+`🚀 AMPX CLAN APPLICATION INFORMATION
+📧 ${gmail}
+👤 @${telegram}
+📱 ${number}
+📘 ${fb}`;
+
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: msg
+    })
+  });
+
+  document.getElementById("signupBox").classList.add("hidden");
+  document.getElementById("successBox").classList.remove("hidden");
+  document.getElementById("menuBtn").style.display = "block";
+}
+
+/* INPUT HELPERS */
+function gmailInput() {
+  let v = document.getElementById("gmail").value.trim();
+  if (!isValidGmail(v)) { alert("Enter Valid Gmail"); return null; }
+  return v;
+}
+function tgInput() {
+  let v = document.getElementById("telegram").value.trim();
+  if (!isValidTelegram(v)) { alert("Enter Valid Telegram"); return null; }
+  return v;
+}
+function numInput() {
+  let v = document.getElementById("tgnumber").value.trim();
+  if (!isValidNumber(v)) { alert("Enter Valid Number"); return null; }
+  return v;
+}
+function fbInput() {
+  let v = document.getElementById("fb").value.trim();
+  if (!isValidFB(v)) { alert("Enter Valid Facebook"); return null; }
+  return v;
+}
+
+/* ADMIN */
+function openAdmin() {
+  let pass = prompt("AMPX PASSWORD:");
+  if (pass === "AMPX") {
+    document.getElementById("adminPanel").style.display = "block";
+    loadUsers();
+  } else {
+    alert("Wrong password!");
+  }
+}
+
+function closeAdmin() {
+  document.getElementById("adminPanel").style.display = "none";
+}
+
+function loadUsers() {
+  let users = JSON.parse(localStorage.getItem("ampxUsers")) || [];
+  let list = document.getElementById("userList");
+  list.innerHTML = "";
+
+  users.forEach((u, i) => {
+    list.innerHTML += `
+      <div class="userCard">
+        <b>User ${i+1}</b><br>
+        📧 ${u.gmail}<br>
+        👤 @${u.telegram}<br>
+        📱 ${u.number}<br>
+        📘 ${u.fb}
+      </div>
+    `;
+  });
+}
+</script>
+
+</body>
+</html>
