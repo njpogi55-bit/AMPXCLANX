@@ -122,17 +122,20 @@ button {
 </div>
 
 <!-- SIGNUP -->
-<div class="box" id="signupBox">
-  <img src="ampx-logo.png" class="logo">
-  <h2>AMPX CLAN APPLICATION</h2>
-
-  <input type="text" id="gmail" placeholder="Enter Gmail">
-  <input type="text" id="telegram" placeholder="Telegram Username">
-  <input type="text" id="tgnumber" placeholder="Telegram Number">
-  <input type="text" id="fb" placeholder="Facebook Link">
-
-  <button onclick="signup()">SIGN UP</button>
-</div>
+function goBackToForm() {
+  document.getElementById("successBox").classList.add("hidden");
+  document.getElementById("signupBox").classList.remove("hidden");
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("submitBtn").innerText = "SUBMIT APPLICATION";
+  
+  document.getElementById("telegram").value = "";
+  document.getElementById("fb").value = "";
+  document.getElementById("tgnumber").value = "";
+  document.getElementById("fullname").value = "";
+  document.getElementById("uploadStatus").innerHTML = 
+    `<i class="fas fa-video" style="font-size: 24px; color: var(--text-gray);"></i><br>` +
+    `<span style="font-size: 13px;">Upload Video Proof</span><br><small style="color: #555;">max 50MB</small>`;
+}
 
 <!-- SUCCESS -->
 <div class="box hidden" id="successBox">
